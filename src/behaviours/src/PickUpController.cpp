@@ -108,7 +108,7 @@ bool PickUpController::SetSonarData(float rangeCenter)
 {
   // If the center ultrasound sensor is blocked by a very close
   // object, then a cube has been successfully lifted.
-  if (rangeCenter < 0.12 && targetFound)
+  if (/*rangeCenter < 0.12*/  targetFound)
   {
     result.type = behavior;
     result.b = nextProcess;
@@ -136,20 +136,24 @@ void PickUpController::ProcessData()
   long int Tdiff = current_time - millTimer;
   float Td = Tdiff/1e3;
 
-  //cout << "PICKUP Target Seen!" << endl;
+  cout << "PICKUP Target Seen!" << endl;
 
-  //cout << "distance : " << blockDistanceFromCamera << " time is : " << Td << endl;
+  cout << "distance : " << blockDistanceFromCamera << " time is : " << Td << endl;
 
   // If the block is very close to the camera then the robot has
   // successfully lifted a target. Enter the target held state to
   // return to the center.
-  if (blockDistanceFromCamera < 0.14 && Td < 3.9)
+
+  //origina//if (blockDistanceFromCamera < 0.14 && Td < 3.9 && targetFound) //steph addition
+  if (blockDistanceFromCamera < 0.17 && Td < 3.9)
   {
+   //original //ignoreCenterSonar = true; //steph addition
     result.type = behavior;
     result.b = nextProcess;
     result.reset = true;
     targetHeld = true;
   }
+
   //Lower wrist and open fingers if no locked target -- this is the
   //case if the robot lost tracking, or missed the cube when
   //attempting to pick it up.
@@ -232,11 +236,11 @@ Result PickUpController::DoWork()
     // The sequence of events is:
     // 1. Target aquisition phase: Align the robot with the closest visible target cube, if near enough to get a target lock then start the pickup timer (Td)
     // 2. Approach Target phase: until *grasp_time_begin* seconds
-    // 3. Stop and close fingers (hopefully on a block - we won't be able to see it remember): at *grasp_time_begin* seconds 
-    // 4. Raise the gripper - does the rover see a block or did it miss it: at *raise_time_begin* seconds 
+    // 3. Stop and close fingers (hopefully on a block - we won't be able to see it remember): at *grasp_time_begin* seconds
+    // 4. Raise the gripper - does the rover see a block or did it miss it: at *raise_time_begin* seconds
     // 5. If we get here the target was not seen in the robots gripper so drive backwards and and try to get a new lock on a target: at *target_require_begin* seconds
     // 6. If we get here we give up and release control with a task failed flag: for *target_pickup_task_time_limit* seconds
-    
+
     // If we don't see any blocks or cubes turn towards the location of the last cube we saw.
     // I.E., try to re-aquire the last cube we saw.
 
@@ -261,7 +265,7 @@ Result PickUpController::DoWork()
         nTargetsSeen = 0;
     }
 
-    
+
     if (nTargetsSeen == 0 && !lockTarget)
     {
       // This if statement causes us to time out if we don't re-aquire a block within the time limit.

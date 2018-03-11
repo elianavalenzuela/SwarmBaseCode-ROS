@@ -41,10 +41,20 @@ private:
   //struct for returning data to ROS adapter
   Result result;
 
-  // Search state
-  // Flag to allow special behaviour for the first waypoint
+
+// Search state
+  // Flag to allow special behaviour for the first four waypoints
   bool first_waypoint = true;
+  bool second_waypoint = false;
+  bool third_waypoint = false;
+  bool fourth_waypoint = false;
+  bool fifth_waypoint = false;
+  bool sixth_waypoint = false;
+  bool seventh_waypoint = false;
+  bool eigth_waypoint = false;
+  bool nine_waypoint = false;
   bool succesfullPickup = false;
+  float stepamount;
 };
 
 #endif /* SEARCH_CONTROLLER */
